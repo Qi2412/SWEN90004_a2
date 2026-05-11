@@ -1,1 +1,8 @@
 swen90004_a2/.idea/
+
+# Build artefacts and experiment outputs
+bin/
+out/
+
+# OS noise
+.DS_Store
