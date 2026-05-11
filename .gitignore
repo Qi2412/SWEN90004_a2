@@ -4,5 +4,8 @@ swen90004_a2/.idea/
 bin/
 out/
 
+# IDE module files (IntelliJ regenerates these on open)
+*.iml
+
 # OS noise
 .DS_Store
