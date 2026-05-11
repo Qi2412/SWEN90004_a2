@@ -165,28 +165,44 @@ public class Simulation {
     }
 
     /**
-     * Perform one tick of the model.
+     * Perform one tick of the model, matching NetLogo's {@code go}
+     * procedure:
+     * <pre>
+     *   if all? turtles [happy?] [stop]
+     *   move-unhappy-turtles      ; each unhappy turtle calls find-new-spot
+     *   update-turtles            ; recompute happiness
+     *   update-globals            ; recompute %similar, %unhappy
+     *   tick
+     * </pre>
      *
-     * @return true if any unhappy agents existed and were moved this tick;
-     *         false if the model is already at equilibrium (no work to do)
+     * <p>Unhappy agents are visited in random order ({@code ask} semantics)
+     * and relocated via the recursive random walk in
+     * {@link Grid#findNewSpotByRandomWalk(Agent, Random)}. An agent whose
+     * walk wanders back to its own patch does not count as a move (NetLogo:
+     * {@code move-to patch-here} is a no-op in that case).</p>
+     *
+     * @return {@code true} if any unhappy agents existed at the start of
+     *         the tick; {@code false} if the model is already at
+     *         equilibrium and nothing was done
      */
     public boolean step() {
         if (hasConverged()) {
             return false;
         }
-        // Snapshot of agents in random order, then move every currently-unhappy one.
-        // Happiness is read from the cached flag set by the previous update phase,
-        // matching NetLogo's "ask turtles with [not happy?] [...]" semantics.
         List<Agent> shuffled = grid.shuffledAgents(rng);
         int movesThisTick = 0;
         for (Agent agent : shuffled) {
-            if (!agent.isHappy()) {
-                Position empty = grid.pickRandomEmptyPosition(rng);
-                if (empty == null) {
-                    // Grid is full; no relocation possible this tick.
-                    break;
-                }
-                grid.moveAgent(agent, empty);
+            if (agent.isHappy()) {
+                continue;
+            }
+            Position destination = grid.findNewSpotByRandomWalk(agent, rng);
+            if (destination == null) {
+                // No empty patch found within the iteration cap; skip this
+                // agent (extreme density / pathological setup).
+                continue;
+            }
+            if (!destination.equals(agent.getPosition())) {
+                grid.moveAgent(agent, destination);
                 movesThisTick++;
             }
         }
@@ -234,28 +250,28 @@ public class Simulation {
     // -- global metrics -----------------------------------------------------
 
     /**
-     * Mean over all agents of (similar neighbours / total neighbours).
-     * Agents with no occupied neighbours contribute 0 to the numerator and
-     * 0 to the denominator (we exclude them from the average), matching the
-     * way NetLogo's {@code percent-similar} reporter skips isolated turtles.
+     * Aggregate similar-neighbour percentage across all agents, computed
+     * exactly as in NetLogo's {@code update-globals}:
+     * <pre>
+     *   percent-similar = (sum of similar-nearby) / (sum of total-nearby) * 100
+     * </pre>
+     * This is a degree-weighted aggregate (agents with more occupied
+     * neighbours contribute proportionally more), not a simple mean of
+     * per-agent ratios. Isolated agents contribute 0 to both sums and
+     * therefore do not need special handling.
      *
-     * @return mean similar-neighbour percentage in {@code [0, 100]}, or 0 if
-     *         no agent has any neighbours yet
+     * @return similar-neighbour percentage in {@code [0, 100]}, or 0 if no
+     *         agent has any neighbours yet
      */
     public double percentSimilar() {
-        List<Agent> agents = grid.getAgents();
-        double accumulator = 0.0;
-        int counted = 0;
-        for (Agent agent : agents) {
+        long sumSimilar = 0;
+        long sumTotal = 0;
+        for (Agent agent : grid.getAgents()) {
             int[] counts = grid.countNeighbours(agent.getPosition(), agent.getColour());
-            int similar = counts[0];
-            int total = counts[1];
-            if (total > 0) {
-                accumulator += (double) similar / (double) total;
-                counted++;
-            }
+            sumSimilar += counts[0];
+            sumTotal += counts[1];
         }
-        return counted == 0 ? 0.0 : 100.0 * accumulator / counted;
+        return sumTotal == 0 ? 0.0 : 100.0 * sumSimilar / sumTotal;
     }
 
     /** @return percentage of agents currently flagged unhappy in {@code [0, 100]}. */

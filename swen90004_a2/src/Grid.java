@@ -13,12 +13,30 @@ import java.util.Random;
  * topology) or a bounded plane. Moore neighbourhoods (8 surrounding cells)
  * are used throughout.</p>
  *
- * <p>For efficiency the grid also maintains a list of empty cells so that
- * {@link #pickRandomEmptyPosition(Random)} runs in O(1) and
- * {@link #moveAgent(Agent, Position)} runs in amortised O(W*H / occupancy)
- * (we use a swap-and-pop trick to keep the empty-list contiguous).</p>
+ * <p>{@link #findNewSpotByRandomWalk(Agent, Random)} reproduces the
+ * NetLogo {@code find-new-spot} procedure: a recursive local random walk
+ * (turn random angle, step a random distance in {@code [0, 10)}) that
+ * continues until the walker stands on an empty patch.</p>
+ *
+ * <p>An auxiliary list of empty positions is maintained for the
+ * {@link #getEmptyCount()} diagnostic and to keep the bookkeeping for
+ * {@link #moveAgent(Agent, Position)} O(1) amortised.</p>
  */
 public class Grid {
+
+    /**
+     * Maximum forward step distance per recursion of the NetLogo
+     * {@code find-new-spot} procedure (NetLogo: {@code fd random-float 10}).
+     */
+    public static final double FIND_NEW_SPOT_MAX_STEP = 10.0;
+
+    /**
+     * Safety cap on the number of random-walk recursions per move attempt.
+     * NetLogo recurses without bound; on a near-full grid this could in
+     * principle stack-overflow. We bail out cleanly instead, returning
+     * {@code null} so the caller can choose to skip the move.
+     */
+    public static final int FIND_NEW_SPOT_MAX_ITER = 10_000;
 
     /** Width of the grid in cells. */
     private final int width;
@@ -117,14 +135,60 @@ public class Grid {
     }
 
     /**
-     * Pick a uniformly random empty cell. Returns {@code null} if the grid
-     * is completely full (no empty cells exist).
+     * Find a destination for {@code mover} by reproducing NetLogo's
+     * {@code find-new-spot} procedure exactly:
+     * <pre>
+     *   to find-new-spot
+     *     rt random-float 360
+     *     fd random-float 10
+     *     if any? other turtles-here [ find-new-spot ]
+     *     move-to patch-here
+     *   end
+     * </pre>
+     *
+     * <p>Starting from the mover's current patch centre, each iteration
+     * chooses a uniformly random heading in {@code [0, 360)} and a
+     * uniformly random forward step in {@code [0, 10)}. The new continuous
+     * position is wrapped onto the torus and rounded to the nearest patch.
+     * If that patch is empty (or contains only the mover itself, which is
+     * how NetLogo's {@code other turtles-here} treats the mover) we return
+     * it. Otherwise the walk continues from the new continuous position;
+     * NetLogo does this via recursion but we use a loop with the same
+     * statistical effect, bounded by {@link #FIND_NEW_SPOT_MAX_ITER}.</p>
+     *
+     * <p>The returned position may equal {@code mover}'s current position
+     * (the walk happened to wander back), corresponding to NetLogo's
+     * no-op {@code move-to patch-here}; callers should treat that as
+     * "did not relocate". Returns {@code null} only if the iteration cap
+     * is exhausted (e.g. a fully saturated grid).</p>
      */
-    public Position pickRandomEmptyPosition(Random rng) {
-        if (emptyPositions.isEmpty()) {
-            return null;
+    public Position findNewSpotByRandomWalk(Agent mover, Random rng) {
+        Position start = mover.getPosition();
+        double x = start.col();
+        double y = start.row();
+        for (int attempt = 0; attempt < FIND_NEW_SPOT_MAX_ITER; attempt++) {
+            double heading = rng.nextDouble() * 360.0;
+            double stepDistance = rng.nextDouble() * FIND_NEW_SPOT_MAX_STEP;
+            double radians = Math.toRadians(heading);
+            x += stepDistance * Math.cos(radians);
+            y += stepDistance * Math.sin(radians);
+            // Wrap continuous coordinates onto the torus.
+            x = wrap(x, width);
+            y = wrap(y, height);
+            int patchCol = Math.floorMod((int) Math.round(x), width);
+            int patchRow = Math.floorMod((int) Math.round(y), height);
+            Agent occupant = cells[patchRow][patchCol];
+            if (occupant == null || occupant == mover) {
+                return new Position(patchRow, patchCol);
+            }
         }
-        return emptyPositions.get(rng.nextInt(emptyPositions.size()));
+        return null;
+    }
+
+    /** Continuous floor-mod for torus wrapping of fractional coordinates. */
+    private static double wrap(double value, int modulus) {
+        double m = value % modulus;
+        return m < 0 ? m + modulus : m;
     }
 
     /**
