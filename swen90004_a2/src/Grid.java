@@ -52,6 +52,14 @@ public class Grid {
                                     similarAgents++;
                                 }
                             }
+                        } else if (j == 0){
+                            if (this.neighbourhood[i - 1][this.gridY-1] != null) {
+                                nearbyAgents++;
+                                if (this.neighbourhood[i][j].getAgentColour() ==
+                                        this.neighbourhood[i - 1][this.gridY-1].getAgentColour()) {
+                                    similarAgents++;
+                                }
+                            }
                         }
                         if (this.neighbourhood[i - 1][j] != null) {
                             nearbyAgents++;
@@ -68,13 +76,72 @@ public class Grid {
                                     similarAgents++;
                                 }
                             }
+                        } else if (j == this.gridY - 1) {
+                            if (this.neighbourhood[i - 1][0] != null) {
+                                nearbyAgents++;
+                                if (this.neighbourhood[i][j].getAgentColour() ==
+                                        this.neighbourhood[i - 1][0].getAgentColour()) {
+                                    similarAgents++;
+                                }
+                            }
+                        }
+                    } else if (i == 0) {
+                        if (j > 0) {
+                            if (this.neighbourhood[this.gridX-1][j - 1] != null) {
+                                nearbyAgents++;
+                                if (this.neighbourhood[i][j].getAgentColour() ==
+                                        this.neighbourhood[this.gridX-1][j - 1].getAgentColour()) {
+                                    similarAgents++;
+                                }
+                            }
+                        } else if (j == 0){
+                            if (this.neighbourhood[this.gridX-1][this.gridY-1] != null) {
+                                nearbyAgents++;
+                                if (this.neighbourhood[i][j].getAgentColour() ==
+                                        this.neighbourhood[this.gridX-1][this.gridY-1].getAgentColour()) {
+                                    similarAgents++;
+                                }
+                            }
+                        }
+                        if (this.neighbourhood[this.gridX-1][j] != null) {
+                            nearbyAgents++;
+                            if (this.neighbourhood[i][j].getAgentColour() ==
+                                    this.neighbourhood[this.gridX-1][j].getAgentColour()) {
+                                similarAgents++;
+                            }
+                        }
+                        if (j < this.gridY - 1) {
+                            if (this.neighbourhood[this.gridX-1][j + 1] != null) {
+                                nearbyAgents++;
+                                if (this.neighbourhood[i][j].getAgentColour() ==
+                                        this.neighbourhood[this.gridX-1][j + 1].getAgentColour()) {
+                                    similarAgents++;
+                                }
+                            }
+                        } else if (j == this.gridY - 1) {
+                            if (this.neighbourhood[this.gridX-1][0] != null) {
+                                nearbyAgents++;
+                                if (this.neighbourhood[i][j].getAgentColour() ==
+                                        this.neighbourhood[this.gridX-1][0].getAgentColour()) {
+                                    similarAgents++;
+                                }
+                            }
                         }
                     }
+
                     if (j > 0) {
                         if (this.neighbourhood[i][j - 1] != null) {
                             nearbyAgents++;
                             if (this.neighbourhood[i][j].getAgentColour() ==
                                     this.neighbourhood[i][j - 1].getAgentColour()) {
+                                similarAgents++;
+                            }
+                        }
+                    } else if (j == 0) {
+                        if (this.neighbourhood[i][this.gridY-1] != null) {
+                            nearbyAgents++;
+                            if (this.neighbourhood[i][j].getAgentColour() ==
+                                    this.neighbourhood[i][this.gridY-1].getAgentColour()) {
                                 similarAgents++;
                             }
                         }
@@ -87,14 +154,29 @@ public class Grid {
                                 similarAgents++;
                             }
                         }
+                    } else if (j == this.gridY - 1) {
+                        if (this.neighbourhood[i][0] != null) {
+                            nearbyAgents++;
+                            if (this.neighbourhood[i][j].getAgentColour() ==
+                                    this.neighbourhood[i][0].getAgentColour()) {
+                                similarAgents++;
+                            }
+                        }
                     }
                     if (i < this.gridX-1) {
-
                         if (j > 0) {
                             if (this.neighbourhood[i + 1][j - 1] != null) {
                                 nearbyAgents++;
                                 if (this.neighbourhood[i][j].getAgentColour() ==
                                         this.neighbourhood[i + 1][j - 1].getAgentColour()) {
+                                    similarAgents++;
+                                }
+                            }
+                        } else if (j == 0) {
+                            if (this.neighbourhood[i + 1][this.gridY-1] != null) {
+                                nearbyAgents++;
+                                if (this.neighbourhood[i][j].getAgentColour() ==
+                                        this.neighbourhood[i + 1][this.gridY-1].getAgentColour()) {
                                     similarAgents++;
                                 }
                             }
@@ -112,8 +194,56 @@ public class Grid {
                                     similarAgents++;
                                 }
                             }
+                        } else if (j == this.gridY - 1) {
+                            if (this.neighbourhood[i + 1][0] != null) {
+                                nearbyAgents++;
+                                if (this.neighbourhood[i][j].getAgentColour() == this.neighbourhood[i + 1][0].getAgentColour()) {
+                                    similarAgents++;
+                                }
+                            }
+                        }
+                    } else if (i == this.gridX-1) {
+                        if (j > 0) {
+                            if (this.neighbourhood[0][j - 1] != null) {
+                                nearbyAgents++;
+                                if (this.neighbourhood[i][j].getAgentColour() ==
+                                        this.neighbourhood[0][j - 1].getAgentColour()) {
+                                    similarAgents++;
+                                }
+                            }
+                        } else if (j == 0) {
+                            if (this.neighbourhood[0][this.gridY-1] != null) {
+                                nearbyAgents++;
+                                if (this.neighbourhood[i][j].getAgentColour() ==
+                                        this.neighbourhood[0][this.gridY-1].getAgentColour()) {
+                                    similarAgents++;
+                                }
+                            }
+                        }
+                        if (this.neighbourhood[0][j] != null) {
+                            nearbyAgents++;
+                            if (this.neighbourhood[i][j].getAgentColour() == this.neighbourhood[0][j].getAgentColour()) {
+                                similarAgents++;
+                            }
+                        }
+                        if (j < this.gridY - 1) {
+                            if (this.neighbourhood[0][j + 1] != null) {
+                                nearbyAgents++;
+                                if (this.neighbourhood[i][j].getAgentColour() == this.neighbourhood[0][j + 1].getAgentColour()) {
+                                    similarAgents++;
+                                }
+                            }
+                        } else if (j == this.gridY - 1) {
+                            if (this.neighbourhood[0][0] != null) {
+                                nearbyAgents++;
+                                if (this.neighbourhood[i][j].getAgentColour() == this.neighbourhood[0][0].getAgentColour()) {
+                                    similarAgents++;
+                                }
+                            }
                         }
                     }
+
+
                     if (nearbyAgents > 8) {
                         System.out.println("ERROR: Impossible number of nearby");
                     }
@@ -122,7 +252,7 @@ public class Grid {
                     }
                     double percentSimilar = (double)similarAgents/(double)nearbyAgents;
                     this.neighbourhood[i][j].updateHappy(percentSimilar);
-                    //System.out.print(similarAgents + " / " + nearbyAgents + "->");
+                    System.out.print(similarAgents + " / " + nearbyAgents + "->");
                     System.out.print(this.neighbourhood[i][j].isHappy() + ", ");
                     if (this.neighbourhood[i][j].isHappy()){
                         numHappy++;
