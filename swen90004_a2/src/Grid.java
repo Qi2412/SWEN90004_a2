@@ -1,8 +1,16 @@
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class Grid {
     private Agent[][] neighbourhood;
+    private ArrayList<Agent> allAgents = new ArrayList<>();
     private int gridX, gridY;
     private int numAgents = 0;
+    private int numUnhappy = 0;
+    private double percentHappy = 0;
+    private double percentSimilar = 0;
+    private int MAX_MOVE = 10;
 
     public Grid(int gridX, int gridY) {
         this.gridX = gridX;
@@ -11,38 +19,40 @@ public class Grid {
     }
 
     public void initialize(int density, int percentWanted) {
-        double percentHappy = 0;
+
         for (int i = 0; i < this.gridX; i++) {
             for (int j = 0; j < this.gridY; j++) {
                 int shouldGenerate = (int) (Math.random() * 100) + 1;
                 if (shouldGenerate <= density) {
-                    this.neighbourhood[i][j] = new Agent(percentWanted);
+                    Agent createdAgent = new Agent(i, j, percentWanted);
+                    this.neighbourhood[i][j] = createdAgent;
                     this.numAgents++;
-                    System.out.print(this.neighbourhood[i][j].getAgentColour() + ", ");
+                    allAgents.add(createdAgent);
+                    //System.out.print(this.neighbourhood[i][j].getAgentColour() + ", ");
                 } else {
-                    System.out.print("null, ");
+                    //System.out.print("null, ");
                 }
             }
-            System.out.print("\n");
+            //System.out.print("\n");
         }
         // check if agents happy
-        percentHappy = this.updateAgents();
-        System.out.println("\n%Happy = " + percentHappy + ";");
+        this.updateAgents();
     }
 
     public double updateAgents() {
-        double percentHappy = 0;
-        int numAgents = 0;
+        double percentSimilarAggregate = 0;
+        //int numAgents = 0;
         int numHappy =0;
+        this.numUnhappy = 0;
         for (int i = 0; i < this.gridX; i++) {
-            System.out.print("\n");
+            //System.out.print("\n");
             for (int j = 0; j < this.gridY; j++) {
                 if (this.neighbourhood[i][j] != null) {
-                    numAgents ++;
+                    this.neighbourhood[i][j].updateCoordinates(i, j);
+                    //numAgents ++;
                     int nearbyAgents = 0;
                     int similarAgents = 0;
-                    //TO BE FINISHED; this needs to be able to handle if there is not an agent
-                    System.out.print("(" + i + "," + j + ") ");
+                    //System.out.print("(" + i + "," + j + ") ");
                     if (i > 0) {
                         if (j > 0) {
                             if (this.neighbourhood[i - 1][j - 1] != null) {
@@ -250,33 +260,83 @@ public class Grid {
                     if (similarAgents> nearbyAgents){
                         System.out.println("ERROR: Impossible number of similar");
                     }
-                    double percentSimilar = (double)similarAgents/(double)nearbyAgents;
-                    this.neighbourhood[i][j].updateHappy(percentSimilar);
-                    System.out.print(similarAgents + " / " + nearbyAgents + "->");
-                    System.out.print(this.neighbourhood[i][j].isHappy() + ", ");
+                    double percentSimilarIndividual = (double)similarAgents/(double)nearbyAgents;
+                    percentSimilarAggregate = percentSimilarAggregate + percentSimilarIndividual;
+
+                    if (this.neighbourhood[i][j] !=null) {
+                        this.neighbourhood[i][j].updateHappy(percentSimilarIndividual);
+                    }
+                    //System.out.print(similarAgents + " / " + nearbyAgents + "->");
+                    //System.out.print(this.neighbourhood[i][j].isHappy() + ", ");
                     if (this.neighbourhood[i][j].isHappy()){
                         numHappy++;
+                    } else {
+                        this.numUnhappy++;
                     }
                 } else {
-                    System.out.print("NULL, ");
+                    //System.out.print("NULL, ");
                 }
             }
         }
-        percentHappy = ((double)numHappy)/((double)numAgents) *100;
+        this.percentHappy = ((double)numHappy)/((double)this.numAgents) *100;
+        this.percentSimilar = (percentSimilarAggregate/(double)this.numAgents)*100;
+        System.out.println("\nUpdated Grid");
+        System.out.println("NumUnhappy = " + this.numUnhappy + ";");
+        System.out.println("%Similar = " + this.percentSimilar + ";");
+        System.out.println("%Unhappy = " + (100-this.percentHappy) + ";");
         return percentHappy;
     }
 
     public void step(int steps){
-        System.out.println("STEPPING");
-        for (int iter = 0; iter<steps; iter++){
-            for (int i = 0; i < this.gridX; i++) {
-                System.out.print("\n");
-                for (int j = 0; j < this.gridY; j++) {
+        for (int iter = 0; iter< steps; iter++) {
+            System.out.println("STEP " + iter);
+            Collections.shuffle(allAgents);
+            for (int a = 0; a < allAgents.size(); a++) {
+                moveAgent(allAgents.get(a));
+            }
+            updateAgents();
+        }
+    }
 
+    public void moveAgent (Agent mover){
+        if (mover.isHappy()){
+            return;
+        } else {
+            while (true) {
+                double rotate = Math.random() * 360;
+                double move = (Math.random() * this.MAX_MOVE )+1;
+                int moveX = (int) Math.round(Math.sin(rotate) * move);
+                int moveY = (int) Math.round(Math.cos(rotate) * move);
+                //System.out.println(mover.getX() + "," + mover.getY() + ": " + rotate + ", move " + move + "(" + moveX + "," + moveY + ")");
+                int newX = mover.getX() + moveX;
+                while (newX >= this.gridX) {
+                    newX = newX - this.gridX;
+                }
+                if (newX < 0) {
+                    newX = this.gridX + newX;
+                }
+
+                int newY = mover.getY() + moveY;
+                while (newY >= this.gridY) {
+                    newY = newY - this.gridY;
+                }
+                if (newY < 0) {
+                    newY = this.gridY + newY;
+                }
+
+
+                if (this.neighbourhood[newX][newY] == null){
+
+                    this.neighbourhood[mover.getX()][mover.getY()] = null;
+                    this.neighbourhood[newX][newY] = mover;
+                    mover.updateCoordinates(newX, newY);
+                    break;
                 }
 
             }
+
         }
+
     }
 }
 

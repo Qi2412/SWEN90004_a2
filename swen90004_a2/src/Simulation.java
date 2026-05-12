@@ -1,6 +1,7 @@
 public class Simulation {
-    private int GRID_X = 4; //grid height
-    private int GRID_Y = 4; //grid width
+    private int GRID_X = 50; //grid height
+    private int GRID_Y = 50; //grid width
+
     private Grid grid = new Grid(GRID_X , GRID_Y); // empty grid for this simulation
     private int density;
     private int percentWanted;
@@ -13,6 +14,6 @@ public class Simulation {
     public void runSimulation(){
         // populate grid with agents and initialize their attributes
         grid.initialize(density, percentWanted);
-        grid.step(1);
+        grid.step(10);
     }
 }
