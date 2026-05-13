@@ -1,4 +1,3 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -11,8 +10,9 @@ public class Grid {
     private double percentHappy = 0;
     private double percentSimilar = 0;
     private int MAX_MOVE = 10;
-    private ArrayList<dataEntry1> gridData = new ArrayList<>();
+    private ArrayList<dataEntry> gridData = new ArrayList<>();
     private int totalMoves = 0;
+    private int tick = 0;
 
     public Grid(int gridX, int gridY) {
         this.gridX = gridX;
@@ -282,16 +282,19 @@ public class Grid {
         }
         this.percentHappy = ((double)numHappy)/((double)this.numAgents) *100;
         this.percentSimilar = (percentSimilarAggregate/(double)this.numAgents)*100;
-        System.out.println("\nUpdated Grid");
-        System.out.println("NumUnhappy = " + this.numUnhappy + ";");
-        System.out.println("%Similar = " + this.percentSimilar + ";");
-        System.out.println("%Unhappy = " + (100-this.percentHappy) + ";");
-        System.out.println("totalMoves = " + this.totalMoves + ";");
+        //System.out.println("\nUpdated Grid");
+        //System.out.println("NumUnhappy = " + this.numUnhappy + ";");
+        //System.out.println("%Similar = " + this.percentSimilar + ";");
+        //System.out.println("%Unhappy = " + (100-this.percentHappy) + ";");
+        //System.out.println("totalMoves = " + this.totalMoves + ";");
+        dataEntry tickEntry = new dataEntry(this.tick,this.percentSimilar, (100-this.percentHappy), this.numUnhappy, this.totalMoves);
+        this.gridData.add(tickEntry);
         return percentHappy;
     }
 
     public ArrayList step(int steps){
         for (int iter = 0; iter< steps; iter++) {
+            this.tick = iter;
             System.out.println("STEP " + iter);
             Collections.shuffle(allAgents);
             for (int a = 0; a < allAgents.size(); a++) {
@@ -346,6 +349,10 @@ public class Grid {
 
         }
 
+    }
+
+    public ArrayList<dataEntry> getGridData() {
+        return gridData;
     }
 }
 

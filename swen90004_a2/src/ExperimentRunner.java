@@ -6,7 +6,8 @@ public class ExperimentRunner {
     public void runExperiment(){
         int pDensity = 95;
         int pPercentWanted = 30;
-        Simulation placeholder = new Simulation(pDensity, pPercentWanted);
+        int pMaxRepeat = 3;
+        Simulation placeholder = new Simulation(pDensity, pPercentWanted, pMaxRepeat);
         placeholder.runSimulation();
     }
 }
