@@ -11,6 +11,8 @@ public class Grid {
     private double percentHappy = 0;
     private double percentSimilar = 0;
     private int MAX_MOVE = 10;
+    private ArrayList<dataEntry1> gridData = new ArrayList<>();
+    private int totalMoves = 0;
 
     public Grid(int gridX, int gridY) {
         this.gridX = gridX;
@@ -284,10 +286,11 @@ public class Grid {
         System.out.println("NumUnhappy = " + this.numUnhappy + ";");
         System.out.println("%Similar = " + this.percentSimilar + ";");
         System.out.println("%Unhappy = " + (100-this.percentHappy) + ";");
+        System.out.println("totalMoves = " + this.totalMoves + ";");
         return percentHappy;
     }
 
-    public void step(int steps){
+    public ArrayList step(int steps){
         for (int iter = 0; iter< steps; iter++) {
             System.out.println("STEP " + iter);
             Collections.shuffle(allAgents);
@@ -295,14 +298,20 @@ public class Grid {
                 moveAgent(allAgents.get(a));
             }
             updateAgents();
+            if (this.numUnhappy == 0){
+                break;
+            }
         }
+        return this.gridData;
     }
 
     public void moveAgent (Agent mover){
         if (mover.isHappy()){
             return;
         } else {
+            this.neighbourhood[mover.getX()][mover.getY()] = null;
             while (true) {
+                //System.out.println(mover.getX() + "," + mover.getY());
                 double rotate = Math.random() * 360;
                 double move = (Math.random() * this.MAX_MOVE )+1;
                 int moveX = (int) Math.round(Math.sin(rotate) * move);
@@ -324,12 +333,12 @@ public class Grid {
                     newY = this.gridY + newY;
                 }
 
-
+                mover.updateCoordinates(newX, newY);
                 if (this.neighbourhood[newX][newY] == null){
-
-                    this.neighbourhood[mover.getX()][mover.getY()] = null;
+                    this.totalMoves++;
+                    //this.neighbourhood[mover.getX()][mover.getY()] = null;
                     this.neighbourhood[newX][newY] = mover;
-                    mover.updateCoordinates(newX, newY);
+                    //mover.updateCoordinates(newX, newY);
                     break;
                 }
 

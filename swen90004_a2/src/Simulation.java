@@ -14,6 +14,6 @@ public class Simulation {
     public void runSimulation(){
         // populate grid with agents and initialize their attributes
         grid.initialize(density, percentWanted);
-        grid.step(10);
+        grid.step(100);
     }
 }
