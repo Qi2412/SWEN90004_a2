@@ -262,7 +262,10 @@ public class Grid {
                     if (similarAgents> nearbyAgents){
                         System.out.println("ERROR: Impossible number of similar");
                     }
-                    double percentSimilarIndividual = (double)similarAgents/(double)nearbyAgents;
+                    double percentSimilarIndividual = 0;
+                    if (nearbyAgents != 0) {
+                        percentSimilarIndividual = (double) similarAgents / (double) nearbyAgents;
+                    }
                     percentSimilarAggregate = percentSimilarAggregate + percentSimilarIndividual;
 
                     if (this.neighbourhood[i][j] !=null) {
@@ -280,7 +283,12 @@ public class Grid {
                 }
             }
         }
-        this.percentHappy = ((double)numHappy)/((double)this.numAgents) *100;
+
+        if (this.numAgents != 0) {
+            this.percentHappy = ((double) numHappy) / ((double) this.numAgents) * 100;
+        } else {
+            this.percentHappy = 0;
+        }
         this.percentSimilar = (percentSimilarAggregate/(double)this.numAgents)*100;
         //System.out.println("\nUpdated Grid");
         //System.out.println("NumUnhappy = " + this.numUnhappy + ";");
@@ -293,9 +301,10 @@ public class Grid {
     }
 
     public ArrayList step(int steps){
-        for (int iter = 0; iter< steps; iter++) {
-            this.tick = iter;
-            System.out.println("STEP " + iter);
+        this.tick++;
+        while ( this.tick < steps) {
+
+            //System.out.println("STEP " + iter);
             Collections.shuffle(allAgents);
             for (int a = 0; a < allAgents.size(); a++) {
                 moveAgent(allAgents.get(a));
@@ -304,6 +313,7 @@ public class Grid {
             if (this.numUnhappy == 0){
                 break;
             }
+            this.tick++;
         }
         return this.gridData;
     }

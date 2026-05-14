@@ -30,39 +30,43 @@ public class Simulation {
             grid.step(this.MAX_TICKS);
             ArrayList<dataEntry> gridData = grid.getGridData();
 
+            outputData(gridData);
 
-            File myObj = new File("experiment_output/");
-            // Create File object
-            if (myObj.mkdir()) {
-                // Try to create the file
-                System.out.println("Folder created: " + myObj.getName());
-            } else {
-                System.out.println("Folder already exists.");
-            }
-
-
-
-
-            try {
-                FileWriter myWriter = new FileWriter("experiment_output/" + density + "_" + percentWanted + "_" + numRepeat + ".csv");
-                myWriter.write("tick, percent_similar, percent_unhappy, num_unhappy, total_moves\n");
-                for (int i = 0; i < gridData.size(); i++) {
-                    myWriter.write(gridData.get(i).getTick() + "," +
-                            String.format("%.1f", gridData.get(i).getPercentSimilar()) + "," +
-                            String.format("%.1f", gridData.get(i).getPercentUnhappy()) + "," +
-                            gridData.get(i).getNumUnhappy() + "," +
-                            gridData.get(i).getTotalMoves() + "\n"
-                    );
-                }
-                myWriter.close();  // must close manually
-                System.out.println("Successfully wrote to the file.");
-            } catch (IOException e) {
-                System.out.println("An error occurred.");
-                e.printStackTrace();
-            }
 
         }
 
 
+    }
+
+    private void outputData(ArrayList<dataEntry> gridData){
+
+
+        File myObj = new File("experiment_output/");
+        // Create File object
+        if (myObj.mkdir()) {
+            // Try to create the file
+            System.out.println("Folder created: " + myObj.getName());
+        } else {
+            System.out.println("Folder already exists.");
+        }
+
+
+        try {
+            FileWriter myWriter = new FileWriter("experiment_output/" + density + "_" + percentWanted + "_" + numRepeat + ".csv");
+            myWriter.write("tick, percent_similar, percent_unhappy, num_unhappy, total_moves\n");
+            for (int i = 0; i < gridData.size(); i++) {
+                myWriter.write(gridData.get(i).getTick() + "," +
+                        String.format("%.1f", gridData.get(i).getPercentSimilar()) + "," +
+                        String.format("%.1f", gridData.get(i).getPercentUnhappy()) + "," +
+                        gridData.get(i).getNumUnhappy() + "," +
+                        gridData.get(i).getTotalMoves() + "\n"
+                );
+            }
+            myWriter.close();  // must close manually
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
     }
 }

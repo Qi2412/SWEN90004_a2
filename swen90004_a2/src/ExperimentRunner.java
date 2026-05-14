@@ -4,10 +4,21 @@ public class ExperimentRunner {
     }
 
     public void runExperiment(){
+        int pMaxRepeat = 3;
         int pDensity = 95;
         int pPercentWanted = 30;
-        int pMaxRepeat = 3;
-        Simulation placeholder = new Simulation(pDensity, pPercentWanted, pMaxRepeat);
-        placeholder.runSimulation();
+
+        //Simulation placeholder = new Simulation(pDensity, pPercentWanted, pMaxRepeat);
+        //placeholder.runSimulation();
+
+        for (int i = 0; i <= 80; i = i+10) {
+            Simulation placeholder = new Simulation(pDensity, i, pMaxRepeat);
+            placeholder.runSimulation();
+        }
+
+        for (int i = 50; i <= 95; i = i+5) {
+            Simulation placeholder = new Simulation(i, pPercentWanted, pMaxRepeat);
+            placeholder.runSimulation();
+        }
     }
 }
