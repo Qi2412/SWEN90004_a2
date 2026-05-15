@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.Collections;
 
+
+// the Grid class handles the world/neighbourhood where Agents exist in;
 public class Grid {
     private Agent[][] neighbourhood;
     private ArrayList<Agent> allAgents = new ArrayList<>();
@@ -15,13 +17,16 @@ public class Grid {
     private int tick = 0;
 
     public Grid(int gridX, int gridY) {
+        // the grid is initialized with its dimensions, x is height, y is width
         this.gridX = gridX;
         this.gridY = gridY;
         this.neighbourhood = new Agent[gridX][gridY];
     }
 
+    // the grid is populated once given the initial conditions
     public void initialize(int density, int percentWanted) {
 
+        // for every cell of the grid, determine if an agent should be generated, and keep track of all agents
         for (int i = 0; i < this.gridX; i++) {
             for (int j = 0; j < this.gridY; j++) {
                 int shouldGenerate = (int) (Math.random() * 100) + 1;
@@ -30,20 +35,16 @@ public class Grid {
                     this.neighbourhood[i][j] = createdAgent;
                     this.numAgents++;
                     allAgents.add(createdAgent);
-                    //System.out.print(this.neighbourhood[i][j].getAgentColour() + ", ");
-                } else {
-                    //System.out.print("null, ");
                 }
             }
-            //System.out.print("\n");
         }
         // check if agents happy
         this.updateAgents();
     }
 
+    // updateAgents checks if the agent is happy based on its neighbours
     public double updateAgents() {
         double percentSimilarAggregate = 0;
-        //int numAgents = 0;
         int numHappy =0;
         this.numUnhappy = 0;
         for (int i = 0; i < this.gridX; i++) {
@@ -51,10 +52,13 @@ public class Grid {
             for (int j = 0; j < this.gridY; j++) {
                 if (this.neighbourhood[i][j] != null) {
                     this.neighbourhood[i][j].updateCoordinates(i, j);
-                    //numAgents ++;
+
                     int nearbyAgents = 0;
                     int similarAgents = 0;
-                    //System.out.print("(" + i + "," + j + ") ");
+
+                    /*this block of code goes through the eight neighbours of the Agent and if the Agent exists on an
+                        edge, finds the neighbour on the wrap around
+                        */
                     if (i > 0) {
                         if (j > 0) {
                             if (this.neighbourhood[i - 1][j - 1] != null) {
@@ -140,7 +144,6 @@ public class Grid {
                             }
                         }
                     }
-
                     if (j > 0) {
                         if (this.neighbourhood[i][j - 1] != null) {
                             nearbyAgents++;
@@ -318,18 +321,21 @@ public class Grid {
         return this.gridData;
     }
 
+    // moveAgent checks if the agent is unhappy, and if it is, allows it to move
     public void moveAgent (Agent mover){
         if (mover.isHappy()){
             return;
         } else {
             this.neighbourhood[mover.getX()][mover.getY()] = null;
+            // the Agent continues to move until it finds an unoccupied cell
             while (true) {
-                //System.out.println(mover.getX() + "," + mover.getY());
+                //the agent turns to a random direction and moves forward a random amount to the designated maximum
                 double rotate = Math.random() * 360;
                 double move = (Math.random() * this.MAX_MOVE )+1;
                 int moveX = (int) Math.round(Math.sin(rotate) * move);
                 int moveY = (int) Math.round(Math.cos(rotate) * move);
-                //System.out.println(mover.getX() + "," + mover.getY() + ": " + rotate + ", move " + move + "(" + moveX + "," + moveY + ")");
+
+                // this block of code enforces the wrap around on both x and y axis
                 int newX = mover.getX() + moveX;
                 while (newX >= this.gridX) {
                     newX = newX - this.gridX;
@@ -337,7 +343,6 @@ public class Grid {
                 if (newX < 0) {
                     newX = this.gridX + newX;
                 }
-
                 int newY = mover.getY() + moveY;
                 while (newY >= this.gridY) {
                     newY = newY - this.gridY;
@@ -349,9 +354,7 @@ public class Grid {
                 mover.updateCoordinates(newX, newY);
                 if (this.neighbourhood[newX][newY] == null){
                     this.totalMoves++;
-                    //this.neighbourhood[mover.getX()][mover.getY()] = null;
                     this.neighbourhood[newX][newY] = mover;
-                    //mover.updateCoordinates(newX, newY);
                     break;
                 }
 

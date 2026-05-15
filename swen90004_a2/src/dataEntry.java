@@ -1,3 +1,4 @@
+// this object records global information in a single tick
 public class dataEntry {
     private int tick, numUnhappy, totalMoves;
     private double percentSimilar, percentUnhappy;

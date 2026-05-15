@@ -4,7 +4,7 @@ public class ExperimentRunner {
     }
 
     public void runExperiment(){
-        int pMaxRepeat = 3;
+        int pMaxRepeat = 3; // how many times each parameter should be used for a simulation
         int pDensity = 95;
         int pPercentWanted = 30;
 

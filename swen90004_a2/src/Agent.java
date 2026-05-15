@@ -1,10 +1,12 @@
 
+// Agent is either a blue or orange agent
 public class Agent {
     private Colour agentColour;
     private boolean happy = false;
     private double percentWanted = 0;
     private int x;
     private int y;
+
     public Agent(int x, int y, int percentWanted){
         this.percentWanted = percentWanted;
         this.randomize();
@@ -12,6 +14,7 @@ public class Agent {
         this.y = y;
     }
 
+    // randomly assigns a colour by coin flip
     public void randomize (){
         if (Math.random()<0.5){
             this.agentColour = Colour.ORANGE;
@@ -37,6 +40,9 @@ public class Agent {
         this.happy = happy;
     }
 
+    /* this method compares a given percentage similar with the Agent's desired percentage and determines whether
+    it is happy
+     */
     public void updateHappy (double percentSimilar){
         if (percentSimilar > ((double)this.percentWanted/100)){
             this.happy = true;

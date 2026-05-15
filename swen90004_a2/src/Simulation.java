@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.io.File;
 import java.io.IOException;
 
+// this runs a grid multiple times with the same parameters
 public class Simulation {
     private int GRID_X = 50; //grid height
     private int GRID_Y = 50; //grid width
@@ -32,12 +33,14 @@ public class Simulation {
 
             outputData(gridData);
 
-
         }
 
 
     }
 
+    /* this method creates a csv file if there is not, naming it based on the parameter and the run number
+    and writes the data into it
+     */
     private void outputData(ArrayList<dataEntry> gridData){
 
 
@@ -49,7 +52,6 @@ public class Simulation {
         } else {
             System.out.println("Folder already exists.");
         }
-
 
         try {
             FileWriter myWriter = new FileWriter("experiment_output/" + density + "_" + percentWanted + "_" + numRepeat + ".csv");
