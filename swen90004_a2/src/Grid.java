@@ -274,8 +274,7 @@ public class Grid {
                     if (this.neighbourhood[i][j] !=null) {
                         this.neighbourhood[i][j].updateHappy(percentSimilarIndividual);
                     }
-                    //System.out.print(similarAgents + " / " + nearbyAgents + "->");
-                    //System.out.print(this.neighbourhood[i][j].isHappy() + ", ");
+
                     if (this.neighbourhood[i][j].isHappy()){
                         numHappy++;
                     } else {
@@ -293,21 +292,17 @@ public class Grid {
             this.percentHappy = 0;
         }
         this.percentSimilar = (percentSimilarAggregate/(double)this.numAgents)*100;
-        //System.out.println("\nUpdated Grid");
-        //System.out.println("NumUnhappy = " + this.numUnhappy + ";");
-        //System.out.println("%Similar = " + this.percentSimilar + ";");
-        //System.out.println("%Unhappy = " + (100-this.percentHappy) + ";");
-        //System.out.println("totalMoves = " + this.totalMoves + ";");
+
         dataEntry tickEntry = new dataEntry(this.tick,this.percentSimilar, (100-this.percentHappy), this.numUnhappy, this.totalMoves);
         this.gridData.add(tickEntry);
         return percentHappy;
     }
 
+    // run the world for either until 0 unhappy agents or a given number of maximum ticks to halt infinite loops
     public ArrayList step(int steps){
-        this.tick++;
-        while ( this.tick < steps) {
 
-            //System.out.println("STEP " + iter);
+        while ( this.tick < steps) {
+            this.tick++;
             Collections.shuffle(allAgents);
             for (int a = 0; a < allAgents.size(); a++) {
                 moveAgent(allAgents.get(a));
@@ -316,7 +311,7 @@ public class Grid {
             if (this.numUnhappy == 0){
                 break;
             }
-            this.tick++;
+
         }
         return this.gridData;
     }
