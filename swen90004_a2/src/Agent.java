@@ -7,6 +7,8 @@ public class Agent {
     private int x;
     private int y;
 
+    private double wealth = 100.0; // Phase 2: Initial wealth value of each resident
+
     public Agent(int x, int y, int percentWanted){
         this.percentWanted = percentWanted;
         this.randomize();
@@ -70,5 +72,15 @@ public class Agent {
     public void updateCoordinates (int x, int y){
         this.x = x;
         this.y = y;
+    }
+
+    // Phase 2: Check if Agent can afford the moving costs.
+    public boolean canAfford(double cost) {
+        return this.wealth >= cost;
+    }
+
+    // Phase 2: Deduct moving cost from wealth value
+    public void deductWealth(double cost) {
+        this.wealth -= cost;
     }
 }
