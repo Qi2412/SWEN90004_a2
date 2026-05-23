@@ -12,9 +12,6 @@ public class ExperimentRunner {
         int pDensity = 95;       // Default density for %wanted sweep
         int pPercentWanted = 30; // Default %wanted for density sweep
 
-        //Simulation placeholder = new Simulation(pDensity, pPercentWanted, pMaxRepeat);
-        //placeholder.runSimulation();
-
         // =================================================================
         // PHASE 1 EXPERIMENTS (Baseline)
         // isPhase2 = false, dummy values (0.0) for threshold and jump distances

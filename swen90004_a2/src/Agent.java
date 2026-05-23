@@ -10,7 +10,6 @@ public class Agent {
     private int y;                          // The agent's y-coordinate
 
     private double currentSimilarity = 0.0; // Phase 2: Record current similarity
-//    private double wealth = 100.0; // Phase 2: Initial wealth value of each resident
 
     /**
      * Constructs a new Agent with a designated position and tolerance level.
@@ -91,14 +90,4 @@ public class Agent {
         this.x = x;
         this.y = y;
     }
-
-//    // Phase 2: Check if Agent can afford the moving costs.
-//    public boolean canAfford(double cost) {
-//        return this.wealth >= cost;
-//    }
-//
-//    // Phase 2: Deduct moving cost from wealth value
-//    public void deductWealth(double cost) {
-//        this.wealth -= cost;
-//    }
 }

@@ -324,29 +324,7 @@ public class Grid {
             this.percentHappy = 0;
         }
         this.percentSimilar = (percentSimilarAggregate/(double)this.numAgents)*100;
-
-//        DataEntry tickEntry = new DataEntry(this.tick,this.percentSimilar, (100-this.percentHappy),
-//                                            this.numUnhappy, this.totalMoves);
-//        this.gridData.add(tickEntry);
     }
-
-    // run the world for either until 0 unhappy agents or a given number of maximum ticks to halt infinite loops
-//    public ArrayList step(int steps){
-//
-//        while ( this.tick < steps) {
-//            this.tick++;
-//            Collections.shuffle(allAgents);
-//            for (int a = 0; a < allAgents.size(); a++) {
-//                moveAgent(allAgents.get(a));
-//            }
-//            updateAgents();
-//            if (this.numUnhappy == 0){
-//                break;
-//            }
-//
-//        }
-//        return this.gridData;
-//    }
 
     /**
      * Executes the simulation loop for a set number of ticks.
@@ -413,10 +391,6 @@ public class Grid {
             int moveX = (int) Math.round(Math.sin(radians) * moveDistance);
             int moveY = (int) Math.round(Math.cos(radians) * moveDistance);
 
-//            // Apply modulo arithmetic to handle toroidal boundary wrap-around cleanly
-//            int newX = (mover.getX() + moveX % gridX + gridX) % gridX;
-//            int newY = (mover.getY() + moveY % gridY + gridY) % gridY;
-
             searchX = (searchX + moveX % gridX + gridX) % gridX;
             searchY = (searchY + moveY % gridY + gridY) % gridY;
 
@@ -428,47 +402,6 @@ public class Grid {
                 break;
             }
         }
-
-
-//        if (mover.isHappy()){
-//            return;
-//        } else {
-//            this.neighbourhood[mover.getX()][mover.getY()] = null;
-//            // the Agent continues to move until it finds an unoccupied cell
-//            while (true) {
-//                //the agent turns to a random direction and moves forward a random amount to the designated maximum
-//                double rotate = Math.random() * 360;
-//                double move = (Math.random() * this.MAX_MOVE )+1;
-//                int moveX = (int) Math.round(Math.sin(rotate) * move);
-//                int moveY = (int) Math.round(Math.cos(rotate) * move);
-//
-//                // this block of code enforces the wrap around on both x and y axis
-//                int newX = mover.getX() + moveX;
-//                while (newX >= this.gridX) {
-//                    newX = newX - this.gridX;
-//                }
-//                if (newX < 0) {
-//                    newX = this.gridX + newX;
-//                }
-//                int newY = mover.getY() + moveY;
-//                while (newY >= this.gridY) {
-//                    newY = newY - this.gridY;
-//                }
-//                if (newY < 0) {
-//                    newY = this.gridY + newY;
-//                }
-//
-//                mover.updateCoordinates(newX, newY);
-//                if (this.neighbourhood[newX][newY] == null){
-//                    this.totalMoves++;
-//                    this.neighbourhood[newX][newY] = mover;
-//                    break;
-//                }
-//
-//            }
-//
-//        }
-
     }
 
     public ArrayList<DataEntry> getGridData() {
