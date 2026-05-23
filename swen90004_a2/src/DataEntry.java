@@ -3,8 +3,11 @@
  * for a single time tick.
  */
 public class DataEntry {
-    private int tick, numUnhappy, totalMoves;
-    private double percentSimilar, percentUnhappy;
+    private int tick;              // Current time step of the simulation
+    private int numUnhappy;        // Number of unhappy agents at this tick
+    private int totalMoves;        // Cumulative number of agent relocations up to this tick
+    private double percentSimilar; // Average percentage of similar neighbours across all agents
+    private double percentUnhappy; // The percentage of the total agent population that is unhappy
 
     /**
      * Constructs a DataEntry object to store metrics for a specific tick.

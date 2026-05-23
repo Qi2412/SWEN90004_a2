@@ -45,12 +45,14 @@ public class ExperimentRunner {
 
         // Run the exact same parameter sweeps for Phase 2 to allow direct comparison
         for (int i = 0; i <= 80; i = i + 10) {
-            Simulation sim = new Simulation(pDensity, i, pMaxRepeat, true, pSevereThreshold, pMinJump, pMaxJump);
+            Simulation sim = new Simulation(pDensity, i, pMaxRepeat, true,
+                                            pSevereThreshold, pMinJump, pMaxJump);
             sim.runSimulation();
         }
 
         for (int i = 50; i <= 95; i = i + 5) {
-            Simulation sim = new Simulation(i, pPercentWanted, pMaxRepeat, true, pSevereThreshold, pMinJump, pMaxJump);
+            Simulation sim = new Simulation(i, pPercentWanted, pMaxRepeat, true,
+                                            pSevereThreshold, pMinJump, pMaxJump);
             sim.runSimulation();
         }
     }

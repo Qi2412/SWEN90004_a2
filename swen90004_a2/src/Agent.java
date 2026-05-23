@@ -3,14 +3,14 @@
  * within the Segregation Model.
  */
 public class Agent {
-    private Colour agentColour;
-    private boolean happy = false;
-    private double percentWanted = 0;
-    private int x;
-    private int y;
+    private Colour agentColour;             // The assigned group colour of the agent
+    private boolean happy = false;          // Satisfaction state based on the local neighbourhood
+    private double percentWanted = 0;       // The threshold percentage for the agent to be happy
+    private int x;                          // The agent's x-coordinate
+    private int y;                          // The agent's y-coordinate
 
     private double currentSimilarity = 0.0; // Phase 2: Record current similarity
-    private double wealth = 100.0; // Phase 2: Initial wealth value of each resident
+//    private double wealth = 100.0; // Phase 2: Initial wealth value of each resident
 
     /**
      * Constructs a new Agent with a designated position and tolerance level.
@@ -92,13 +92,13 @@ public class Agent {
         this.y = y;
     }
 
-    // Phase 2: Check if Agent can afford the moving costs.
-    public boolean canAfford(double cost) {
-        return this.wealth >= cost;
-    }
-
-    // Phase 2: Deduct moving cost from wealth value
-    public void deductWealth(double cost) {
-        this.wealth -= cost;
-    }
+//    // Phase 2: Check if Agent can afford the moving costs.
+//    public boolean canAfford(double cost) {
+//        return this.wealth >= cost;
+//    }
+//
+//    // Phase 2: Deduct moving cost from wealth value
+//    public void deductWealth(double cost) {
+//        this.wealth -= cost;
+//    }
 }

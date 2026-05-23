@@ -7,23 +7,23 @@ import java.util.Collections;
  * It manages the initialisation, updating and movement of all agents.
  */
 public class Grid {
-    private Agent[][] neighbourhood;
-    private ArrayList<Agent> allAgents = new ArrayList<>();
-    private int gridX, gridY;
-    private int numAgents = 0;
-    private int numUnhappy = 0;
-    private double percentHappy = 0;
-    private double percentSimilar = 0;
-    private int MAX_MOVE = 10;
-    private ArrayList<DataEntry> gridData = new ArrayList<>();
-    private int totalMoves = 0;
-    private int tick = 0;
+    private Agent[][] neighbourhood; // A 2D array representing the spatial grid
+    private ArrayList<Agent> allAgents = new ArrayList<>(); // A list tracking all active agents
+    private int gridX, gridY; // The height (x) and width (y) of the grid
+    private int numAgents = 0; // Total number of agents spawned in the grid
+    private int numUnhappy = 0; // Current count of unhappy agents
+    private double percentHappy = 0; // Overall percentage of satisfied agents
+    private double percentSimilar = 0; // Global average similarity percentage
+    private int MAX_MOVE = 10; // Maximum jump distance for normal relocation
+    private ArrayList<DataEntry> gridData = new ArrayList<>(); // Collection of metrics per tick
+    private int totalMoves = 0; // Cumulative count of all agent jumps
+    private int tick = 0; // The current time step of the simulation
 
     // Phase 2 parameters
-    private boolean isPhase2 = false;
-    private double severeThreshold = 0.25;
-    private double minJump = 10.0;
-    private double maxJump = 20.0;
+    private boolean isPhase2 = false; // Flag to toggle Phase 2 extension mechanics
+    private double severeThreshold = 0.25; // Similarity ratio triggering a jump
+    private double minJump = 10.0; // Minimum distance for a jump
+    private double maxJump = 20.0; // Maximum distance for a jump
 
     /**
      * Constructs an empty Grid with the specified dimensions.
