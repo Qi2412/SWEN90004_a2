@@ -7,6 +7,7 @@ public class Agent {
     private int x;
     private int y;
 
+    private double currentSimilarity = 0.0; // Phase 2: Record current similarity
     private double wealth = 100.0; // Phase 2: Initial wealth value of each resident
 
     public Agent(int x, int y, int percentWanted){
@@ -46,6 +47,7 @@ public class Agent {
     it is happy
      */
     public void updateHappy (double percentSimilar){
+        this.currentSimilarity = percentSimilar;
         if (percentSimilar > ((double)this.percentWanted/100)){
             this.happy = true;
         } else {
@@ -67,6 +69,10 @@ public class Agent {
 
     public void setX(int x) {
         this.x = x;
+    }
+
+    public double getCurrentSimilarity() {
+        return currentSimilarity;
     }
 
     public void updateCoordinates (int x, int y){
