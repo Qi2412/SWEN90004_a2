@@ -297,7 +297,7 @@ public class Grid {
                     if (similarAgents> nearbyAgents){
                         System.out.println("ERROR: Impossible number of similar");
                     }
-                    double percentSimilarIndividual = 0;
+                    double percentSimilarIndividual = 1.0;
                     if (nearbyAgents != 0) {
                         percentSimilarIndividual = (double) similarAgents / (double) nearbyAgents;
                     }
@@ -325,9 +325,9 @@ public class Grid {
         }
         this.percentSimilar = (percentSimilarAggregate/(double)this.numAgents)*100;
 
-        DataEntry tickEntry = new DataEntry(this.tick,this.percentSimilar, (100-this.percentHappy),
-                                            this.numUnhappy, this.totalMoves);
-        this.gridData.add(tickEntry);
+//        DataEntry tickEntry = new DataEntry(this.tick,this.percentSimilar, (100-this.percentHappy),
+//                                            this.numUnhappy, this.totalMoves);
+//        this.gridData.add(tickEntry);
     }
 
     // run the world for either until 0 unhappy agents or a given number of maximum ticks to halt infinite loops
@@ -392,6 +392,9 @@ public class Grid {
         int oldY = mover.getY();
         this.neighbourhood[oldX][oldY] = null;
 
+        int searchX = oldX;
+        int searchY = oldY;
+
         // Continuously probe for a new empty cell
         while (true) {
             double moveDistance;
@@ -410,14 +413,17 @@ public class Grid {
             int moveX = (int) Math.round(Math.sin(radians) * moveDistance);
             int moveY = (int) Math.round(Math.cos(radians) * moveDistance);
 
-            // Apply modulo arithmetic to handle toroidal boundary wrap-around cleanly
-            int newX = (mover.getX() + moveX % gridX + gridX) % gridX;
-            int newY = (mover.getY() + moveY % gridY + gridY) % gridY;
+//            // Apply modulo arithmetic to handle toroidal boundary wrap-around cleanly
+//            int newX = (mover.getX() + moveX % gridX + gridX) % gridX;
+//            int newY = (mover.getY() + moveY % gridY + gridY) % gridY;
+
+            searchX = (searchX + moveX % gridX + gridX) % gridX;
+            searchY = (searchY + moveY % gridY + gridY) % gridY;
 
             // Finalise move if the destination is empty
-            if (this.neighbourhood[newX][newY] == null) {
-                mover.updateCoordinates(newX, newY);
-                this.neighbourhood[newX][newY] = mover;
+            if (this.neighbourhood[searchX][searchY] == null) {
+                mover.updateCoordinates(searchX, searchY);
+                this.neighbourhood[searchX][searchY] = mover;
                 this.totalMoves++;
                 break;
             }
