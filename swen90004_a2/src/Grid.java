@@ -334,18 +334,18 @@ public class Grid {
             this.tick = t;
             updateAgents();
 
-            // 记录当前状态
+            // Record the current state
             gridData.add(new dataEntry(tick, percentSimilar, (100-percentHappy), numUnhappy, totalMoves));
 
-            // 如果系统中没有人不开心，提前终止模拟
+            // If no one in the system is unhappy, the simulation will terminate early.
             if (numUnhappy == 0) {
                 break;
             }
 
-            // 打乱次序，维持系统并发公平性
+            // Disrupt the order to maintain system concurrency fairness
             Collections.shuffle(allAgents);
 
-            // 加上过滤条件，只有不开心的人才能搬家
+            // Add filtering, only unhappy agent can move.
             for (Agent agent : allAgents) {
                 if (!agent.isHappy()) {
                     moveAgent(agent);

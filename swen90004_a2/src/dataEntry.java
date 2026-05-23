@@ -3,7 +3,8 @@ public class dataEntry {
     private int tick, numUnhappy, totalMoves;
     private double percentSimilar, percentUnhappy;
 
-    public dataEntry(int tick, double percentSimilar, double percentUnhappy, int numUnhappy, int totalMoves){
+    public dataEntry(int tick, double percentSimilar,
+                     double percentUnhappy, int numUnhappy, int totalMoves){
         this.tick = tick;
         this.percentSimilar=percentSimilar;
         this.percentUnhappy=percentUnhappy;
