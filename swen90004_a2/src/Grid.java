@@ -312,21 +312,46 @@ public class Grid {
     }
 
     // run the world for either until 0 unhappy agents or a given number of maximum ticks to halt infinite loops
-    public ArrayList step(int steps){
+//    public ArrayList step(int steps){
+//
+//        while ( this.tick < steps) {
+//            this.tick++;
+//            Collections.shuffle(allAgents);
+//            for (int a = 0; a < allAgents.size(); a++) {
+//                moveAgent(allAgents.get(a));
+//            }
+//            updateAgents();
+//            if (this.numUnhappy == 0){
+//                break;
+//            }
+//
+//        }
+//        return this.gridData;
+//    }
 
-        while ( this.tick < steps) {
-            this.tick++;
-            Collections.shuffle(allAgents);
-            for (int a = 0; a < allAgents.size(); a++) {
-                moveAgent(allAgents.get(a));
-            }
+    public void step(int maxTicks) {
+        for (int t = 0; t < maxTicks; t++) {
+            this.tick = t;
             updateAgents();
-            if (this.numUnhappy == 0){
+
+            // 记录当前状态
+            gridData.add(new dataEntry(tick, percentSimilar, (100-percentHappy), numUnhappy, totalMoves));
+
+            // 如果系统中没有人不开心，提前终止模拟
+            if (numUnhappy == 0) {
                 break;
             }
 
+            // 打乱次序，维持系统并发公平性
+            Collections.shuffle(allAgents);
+
+            // 加上过滤条件，只有不开心的人才能搬家
+            for (Agent agent : allAgents) {
+                if (!agent.isHappy()) {
+                    moveAgent(agent);
+                }
+            }
         }
-        return this.gridData;
     }
 
     // =========================
