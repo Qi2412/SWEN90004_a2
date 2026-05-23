@@ -1,5 +1,7 @@
-
-// Agent is either a blue or orange agent
+/**
+ * The Agent class represents an individual resident (either BLUE or ORANGE)
+ * within the Segregation Model.
+ */
 public class Agent {
     private Colour agentColour;
     private boolean happy = false;
@@ -10,6 +12,12 @@ public class Agent {
     private double currentSimilarity = 0.0; // Phase 2: Record current similarity
     private double wealth = 100.0; // Phase 2: Initial wealth value of each resident
 
+    /**
+     * Constructs a new Agent with a designated position and tolerance level.
+     * @param x The initial x-coordinate.
+     * @param y The initial y-coordinate.
+     * @param percentWanted The threshold percentage for the agent to be happy.
+     */
     public Agent(int x, int y, int percentWanted){
         this.percentWanted = percentWanted;
         this.randomize();
@@ -17,7 +25,10 @@ public class Agent {
         this.y = y;
     }
 
-    // randomly assigns a colour by coin flip
+    /**
+     * Randomly assigns the agent's colour (ORANGE or BLUE) with equal probability.
+     * Assumption: Math.random() provides a uniform distribution [0.0, 1.0).
+     */
     public void randomize (){
         if (Math.random()<0.5){
             this.agentColour = Colour.ORANGE;
@@ -43,8 +54,9 @@ public class Agent {
         this.happy = happy;
     }
 
-    /* this method compares a given percentage similar with the Agent's desired percentage and determines whether
-    it is happy
+    /**
+     * Updates the happiness state based on the current neighbourhood similarity.
+     * @param percentSimilar The actual percentage of similar neighbours (0 to 100).
      */
     public void updateHappy (double percentSimilar){
         this.currentSimilarity = percentSimilar;

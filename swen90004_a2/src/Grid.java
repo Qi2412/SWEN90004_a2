@@ -2,7 +2,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 
-// the Grid class handles the world/neighbourhood where Agents exist in;
+/**
+ * The Grid class handles the world/neighbourhood where Agents exist.
+ * It manages the initialisation, updating and movement of all agents.
+ */
 public class Grid {
     private Agent[][] neighbourhood;
     private ArrayList<Agent> allAgents = new ArrayList<>();
@@ -12,7 +15,7 @@ public class Grid {
     private double percentHappy = 0;
     private double percentSimilar = 0;
     private int MAX_MOVE = 10;
-    private ArrayList<dataEntry> gridData = new ArrayList<>();
+    private ArrayList<DataEntry> gridData = new ArrayList<>();
     private int totalMoves = 0;
     private int tick = 0;
 
@@ -22,6 +25,11 @@ public class Grid {
     private double minJump = 10.0;
     private double maxJump = 20.0;
 
+    /**
+     * Constructs an empty Grid with the specified dimensions.
+     * @param gridX The grid x-coordinate
+     * @param gridY The grid y-coordinate
+     */
     public Grid(int gridX, int gridY) {
         // the grid is initialized with its dimensions, x is height, y is width
         this.gridX = gridX;
@@ -29,17 +37,26 @@ public class Grid {
         this.neighbourhood = new Agent[gridX][gridY];
     }
 
-    public void setPhase2Params(boolean isPhase2, double severeThreshold, double minJump, double maxJump) {
+    /**
+     * Injects the specific Phase 2 parameters into the grid configuration.
+     */
+    public void setPhase2Params(boolean isPhase2, double severeThreshold,
+                                double minJump, double maxJump) {
         this.isPhase2 = isPhase2;
         this.severeThreshold = severeThreshold;
         this.minJump = minJump;
         this.maxJump = maxJump;
     }
 
-    // the grid is populated once given the initial conditions
+    /**
+     * Populates the grid with agents based on a defined density.
+     * @param density Probability (1-100) of an agent spawning in a given cell.
+     * @param percentWanted The desired similarity percentage for each agent.
+     */
     public void initialize(int density, int percentWanted) {
 
-        // for every cell of the grid, determine if an agent should be generated, and keep track of all agents
+        // for every cell of the grid, determine if an agent should be generated,
+        // and keep track of all agents
         for (int i = 0; i < this.gridX; i++) {
             for (int j = 0; j < this.gridY; j++) {
                 int shouldGenerate = (int) (Math.random() * 100) + 1;
@@ -55,8 +72,10 @@ public class Grid {
         this.updateAgents();
     }
 
-    // updateAgents checks if the agent is happy based on its neighbours
-    public double updateAgents() {
+    /**
+     * Evaluates all agents to update their similarity calculations and happiness.
+     */
+    public void updateAgents() {
         double percentSimilarAggregate = 0;
         int numHappy =0;
         this.numUnhappy = 0;
@@ -69,9 +88,9 @@ public class Grid {
                     int nearbyAgents = 0;
                     int similarAgents = 0;
 
-                    /*this block of code goes through the eight neighbours of the Agent and if the Agent exists on an
-                        edge, finds the neighbour on the wrap around
-                        */
+                    /* this block of code goes through the eight neighbours of the Agent
+                    and if the Agent exists on an edge, finds the neighbour on the wrap around
+                    */
                     if (i > 0) {
                         if (j > 0) {
                             if (this.neighbourhood[i - 1][j - 1] != null) {
@@ -306,9 +325,9 @@ public class Grid {
         }
         this.percentSimilar = (percentSimilarAggregate/(double)this.numAgents)*100;
 
-        dataEntry tickEntry = new dataEntry(this.tick,this.percentSimilar, (100-this.percentHappy), this.numUnhappy, this.totalMoves);
+        DataEntry tickEntry = new DataEntry(this.tick,this.percentSimilar, (100-this.percentHappy),
+                                            this.numUnhappy, this.totalMoves);
         this.gridData.add(tickEntry);
-        return percentHappy;
     }
 
     // run the world for either until 0 unhappy agents or a given number of maximum ticks to halt infinite loops
@@ -329,13 +348,18 @@ public class Grid {
 //        return this.gridData;
 //    }
 
+    /**
+     * Executes the simulation loop for a set number of ticks.
+     * @param maxTicks The maximum number of time steps to simulate.
+     */
     public void step(int maxTicks) {
         for (int t = 0; t < maxTicks; t++) {
             this.tick = t;
             updateAgents();
 
             // Record the current state
-            gridData.add(new dataEntry(tick, percentSimilar, (100-percentHappy), numUnhappy, totalMoves));
+            gridData.add(new DataEntry(tick, percentSimilar, (100-percentHappy),
+                                       numUnhappy, totalMoves));
 
             // If no one in the system is unhappy, the simulation will terminate early.
             if (numUnhappy == 0) {
@@ -357,31 +381,40 @@ public class Grid {
     // =========================
     // UPDATED moveAgent method
     // =========================
-    // moveAgent checks if the agent is unhappy, and if it is, allows it to move
+
+    /**
+     * Calculates a new location for an unhappy agent and moves it there.
+     * In Phase 2, severely unhappy agents leap further away.
+     * @param mover The agent that intends to relocate.
+     */
     public void moveAgent (Agent mover){
         int oldX = mover.getX();
         int oldY = mover.getY();
         this.neighbourhood[oldX][oldY] = null;
 
+        // Continuously probe for a new empty cell
         while (true) {
             double moveDistance;
 
-            // A jump is triggered only when Phase 2 is enabled and the similarity is below a threshold
+            // Phase 2 extension: A jump is triggered when the similarity is below a threshold
             if (isPhase2 && mover.getCurrentSimilarity() < severeThreshold) {
                 moveDistance = minJump + (Math.random() * (maxJump - minJump));
             } else {
                 moveDistance = (Math.random() * this.MAX_MOVE) + 1;
             }
 
+            // Calculate directional offsets using radians
             double rotate = Math.random() * 360;
             double radians = Math.toRadians(rotate);
 
             int moveX = (int) Math.round(Math.sin(radians) * moveDistance);
             int moveY = (int) Math.round(Math.cos(radians) * moveDistance);
 
+            // Apply modulo arithmetic to handle toroidal boundary wrap-around cleanly
             int newX = (mover.getX() + moveX % gridX + gridX) % gridX;
             int newY = (mover.getY() + moveY % gridY + gridY) % gridY;
 
+            // Finalise move if the destination is empty
             if (this.neighbourhood[newX][newY] == null) {
                 mover.updateCoordinates(newX, newY);
                 this.neighbourhood[newX][newY] = mover;
@@ -432,7 +465,7 @@ public class Grid {
 
     }
 
-    public ArrayList<dataEntry> getGridData() {
+    public ArrayList<DataEntry> getGridData() {
         return gridData;
     }
 }
