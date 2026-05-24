@@ -1,0 +1,4 @@
+tick, percent_similar, percent_unhappy, num_unhappy, total_moves
+0,50.6,0.7,16,0
+1,51.3,0.1,2,16
+2,51.3,0.0,0,18
